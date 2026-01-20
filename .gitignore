@@ -29,3 +29,7 @@ __pycache__/
 # Log files
 *.log
 /res
+
+# Datasets
+nuscenes/
+corruption/
