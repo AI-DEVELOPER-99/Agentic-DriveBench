@@ -11,7 +11,7 @@ def test_pipeline():
     with open('data/drivebench-test.json', 'r') as f:
         test_data = json.load(f)
     
-    sample = test_data[0]
+    sample = test_data[10]
     
     print("="*80)
     print("Testing Agentic Pipeline")

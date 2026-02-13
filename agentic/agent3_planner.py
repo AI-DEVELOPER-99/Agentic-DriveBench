@@ -1,6 +1,6 @@
 """Agent 3: Planner Agent - Decomposes questions and creates reasoning plans."""
 from typing import List, Dict, Any
-from agentic.ollama_client import OllamaClient
+from .ollama_client import OllamaClient
 
 
 class PlannerAgent:

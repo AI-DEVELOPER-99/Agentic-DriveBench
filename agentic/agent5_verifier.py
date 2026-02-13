@@ -1,6 +1,6 @@
 """Agent 5: Verifier Agent - Validates reasoning and assigns confidence."""
 from typing import Dict, Any
-from agentic.ollama_client import OllamaClient
+from .ollama_client import OllamaClient
 
 
 class VerifierAgent:

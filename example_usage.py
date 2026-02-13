@@ -5,8 +5,8 @@ Example: How to use the Agentic Pipeline
 This example shows how to use both the baseline and agentic pipeline programmatically.
 """
 
-from agentic.pipeline import AgenticPipeline
-from agentic.baseline import BaselineVLM
+from .agentic.pipeline import AgenticPipeline
+from .agentic.baseline import BaselineVLM
 
 
 # Example driving scene question

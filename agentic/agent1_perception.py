@@ -1,6 +1,6 @@
 """Agent 1: Perception Agent - Object detection and depth estimation."""
 from typing import List, Dict, Any, Optional
-from agentic.ollama_client import OllamaClient
+from .ollama_client import OllamaClient
 from ultralytics import YOLO
 import cv2
 import numpy as np

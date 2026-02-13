@@ -1,6 +1,6 @@
 """Baseline VLM for comparison."""
 from typing import Dict
-from agentic.ollama_client import OllamaClient
+from .ollama_client import OllamaClient
 
 
 class BaselineVLM:

@@ -1,11 +1,11 @@
 """Main Agentic Pipeline - Integrates all 5 agents."""
 from typing import Dict, List, Any
-from agentic.ollama_client import OllamaClient
-from agentic.agent1_perception import PerceptionAgent
-from agentic.agent2_scene_graph import SceneGraphAgent
-from agentic.agent3_planner import PlannerAgent
-from agentic.agent4_executor import ExecutorAgent
-from agentic.agent5_verifier import VerifierAgent
+from .ollama_client import OllamaClient
+from .agent1_perception import PerceptionAgent
+from .agent2_scene_graph import SceneGraphAgent
+from .agent3_planner import PlannerAgent
+from .agent4_executor import ExecutorAgent
+from .agent5_verifier import VerifierAgent
 
 
 class AgenticPipeline:
