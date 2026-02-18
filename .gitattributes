@@ -1,0 +1,5 @@
+# Git LFS: track dataset binaries under `data/`
+# This tracks everything under `data/` as LFS objects (images, zips, etc.)
+# You can replace or narrow this pattern if you only want specific file types.
+
+data/** filter=lfs diff=lfs merge=lfs -text
