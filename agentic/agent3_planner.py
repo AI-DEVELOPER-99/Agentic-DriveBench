@@ -1,6 +1,7 @@
 """Agent 3: Planner Agent - Decomposes questions and creates reasoning plans."""
 from typing import List, Dict, Any
 from .ollama_client import OllamaClient
+import re
 
 
 class PlannerAgent:
@@ -22,14 +23,29 @@ class PlannerAgent:
         """
         scene_desc = scene_graph.get("scene_description", "")
         
+        obj_info = ""
+        match = re.search(r'<c\d+,(\w+),([\d.]+),([\d.]+)>', question)
+        if match:
+            cam = match.group(1)
+            x = float(match.group(2))
+            y = float(match.group(3))
+            obj = self._find_object_at(cam, x, y, scene_graph)
+            if obj:
+                obj_info = f"The object at {cam} {x},{y} is a {obj['class']}."
+            else:
+                obj_info = f"No object detected at {cam} {x},{y}."
+        
         prompt = f"""You are an autonomous driving assistant. Analyze the scene and answer the question.
 
 Scene Description:
 {scene_desc}
 
+Object Information:
+{obj_info}
+
 Question: {question}
 
-Provide your reasoning and answer. Be concise and specific.
+Provide your reasoning and answer. Be concise and specific. Focus on the specified object if mentioned.
 
 Answer:"""
         
@@ -89,3 +105,33 @@ Answer:"""
             })
         
         return steps
+
+    def _find_object_at(self, camera: str, x: float, y: float, scene_graph: Dict[str, Any]) -> Dict[str, Any] | None:
+        """Find the detected object closest to the given coordinates in the camera."""
+        detections = scene_graph.get("raw_perception", {}).get("detections", [])
+        candidates = [d for d in detections if d.get("camera_view") == camera.lower()]
+        
+        if not candidates:
+            return None
+        
+        # Normalize input coordinates if they appear to be in 0-1 range
+        # YOLO uses pixel coordinates, but input coords are normalized (0-1)
+        img_width = 1920  # Standard image width
+        img_height = 1080  # Standard image height
+        
+        # If x, y are small (< 2), assume they're normalized
+        if x < 2 and y < 2:
+            x_pixel = x * img_width
+            y_pixel = y * img_height
+        else:
+            x_pixel = x
+            y_pixel = y
+        
+        # Find closest by Euclidean distance
+        closest = min(candidates, key=lambda d: ((d["center"][0] - x_pixel)**2 + (d["center"][1] - y_pixel)**2)**0.5)
+        distance = ((closest["center"][0] - x_pixel)**2 + (closest["center"][1] - y_pixel)**2)**0.5
+        
+        # If within reasonable pixel distance (e.g., 100 pixels)
+        if distance < 100:
+            return closest
+        return None

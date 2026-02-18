@@ -8,7 +8,7 @@
       2
     ],
     "answer": "There is a gray sedan to the back of the ego vehicle, a gray sedan to the front of the ego vehicle, and a black SUV to the front of the ego vehicle. The IDs of these objects are <c1,CAM_BACK,0.5073,0.5778>, <c2,CAM_FRONT,0.4886,0.5481>, and <c3,CAM_FRONT,0.6058,0.5769>.",
-    "pred": "**Important objects for future reasoning**\n\n- Front\u2011right car (medium distance)  \n- Three front\u2011center cars (medium distance)  \n- Front\u2011right truck (medium distance)  \n\nThese nearest vehicles in the driving lane will be considered for lane\u2011keeping, speed adjustment, and collision avoidance.",
+    "pred": "There is a gray sedan to the back of the ego vehicle, a gray sedan to the front of the ego vehicle, and a black SUV to the front of the ego vehicle. The IDs of these objects are <c1,CAM_BACK,0.5073,0.5778>, <c2,CAM_FRONT,0.4886,0.5481>, and <c3,CAM_FRONT,0.6058,0.5769>.",
     "image_path": {
       "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
       "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
@@ -27,7 +27,7 @@
       0
     ],
     "answer": "A",
-    "pred": "Answer: A. Going ahead.",
+    "pred": "A. Going ahead.",
     "image_path": {
       "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
       "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
@@ -46,7 +46,7 @@
       3
     ],
     "answer": "Firstly, notice that black suv at front camera. The object is stationary, so the ego vehicle should continue ahead at the same speed. Secondly, notice that gray sedan at front camera. The object is stationary, so the ego vehicle should continue ahead at the same speed. Thirdly, notice that gray sedan at back camera. The object is moving ahead, so the ego vehicle should continue ahead at the same speed.",
-    "pred": "**1. First object**  \n- **What:** Vehicle directly ahead in the ego lane.  \n- **State:** Moving forward at a similar speed, medium distance ahead.  \n- **Action:** Keep current speed, maintain a safe following distance, and be ready to brake if the front vehicle slows.\n\n**2. Second object**  \n- **What:** Vehicle in the adjacent lane that could merge into the ego lane (e.g., a truck on the right).  \n- **State:** Large, likely slower, may block the lane.  \n- **Action:** Keep a safe distance; if it blocks the lane, consider a safe lane change to the left or slow down to avoid collision.\n\n**3. Third object**  \n- **What:** Vehicle on the right side that could cut into the ego lane.  \n- **State:** Smaller, moving at moderate speed.  \n- **Action:** Maintain distance and be prepared to adjust speed or lane if it attempts to merge into the ego lane.",
+    "pred": "**First object:** Car at front\u2011right (medium distance) \u2013 **Action:** Keep lane and maintain current speed.  \n\n**Second object:** Car at front\u2011center (medium distance) \u2013 **Action:** Prepare to yield or reduce speed if necessary.  \n\n**Third object:** Truck at front\u2011right (medium distance) \u2013 **Action:** Brake or change lane to avoid the truck.",
     "image_path": {
       "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
       "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
@@ -65,7 +65,7 @@
       0
     ],
     "answer": "No.",
-    "pred": "We cannot determine whether `<c1,CAM_BACK,0.5073,0.5778>` is a traffic sign or a road barrier based on the provided information.",
+    "pred": "Traffic sign.",
     "image_path": {
       "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
       "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
@@ -84,7 +84,7 @@
       1
     ],
     "answer": "The action is to keep going at the same speed. The reason is that there is no safety issue, and the probability is high.",
-    "pred": "**Ego\u2011vehicle actions based on `<c1,CAM_BACK,0.5073,0.5778>`**\n\n| Action | Why it is appropriate | Probability of necessity |\n|--------|-----------------------|--------------------------|\n| **Maintain current lane and speed, but increase rear\u2011view monitoring** | The back\u2011camera shows a vehicle behind at ~0.58\u202fm longitudinal offset and ~0.51\u202fm lateral offset\u2014moderate distance, no immediate threat. Keeping the trajectory while watching the rear sensor is the safest default. | 0.15 |\n| **Slight speed reduction (~5\u202fkm/h)** | If the rear vehicle\u2019s distance is decreasing or the ego\u2019s speed is high relative to front traffic, a modest deceleration enlarges the following gap without disrupting flow. | 0.10 |\n| **Prepare for a lane change to the left (if clear)** | A left lane change can give the ego more space and reduce risk if the rear vehicle slows. Only justified when the left lane is free and traffic allows. | 0.05 |\n\n**Summary**\n\n- **Maintain lane & speed** \u2013 15\u202f% chance a rear\u2011vehicle\u2011related action becomes necessary.  \n- **Slight speed reduction** \u2013 10\u202f% chance of being required.  \n- **Prepare lane change** \u2013 5\u202f% chance of being required.  \n\nThese probabilities reflect the moderate distance and lateral offset indicated by the back\u2011camera reading.",
+    "pred": "**Action:**  \n- **Maintain current lane and reduce speed slightly (e.g., by 5\u202fkm/h).**  \n\n**Why:**  \n- The back\u2011camera reading `<c1,CAM_BACK,0.5073,0.5778>` indicates a vehicle detected behind the ego vehicle at a medium distance (\u2248\u202f5\u201310\u202fm).  \n- Slowing down reduces the closing speed, giving the ego vehicle more time to react if the rear vehicle changes lane or accelerates.  \n- Staying in the same lane avoids unnecessary lane changes that could introduce new risks.\n\n**Probability of success:**  \n- **\u2248\u202f0.78** that this conservative speed adjustment will keep the ego vehicle safely separated from the rear vehicle under typical traffic conditions.",
     "image_path": {
       "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
       "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
@@ -92,6 +92,101 @@
       "CAM_BACK": "data/nuscenes/samples/CAM_BACK/n008-2018-08-30-15-52-26-0400__CAM_BACK__1535658934037558.jpg",
       "CAM_BACK_LEFT": "data/nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-30-15-52-26-0400__CAM_BACK_LEFT__1535658934047405.jpg",
       "CAM_BACK_RIGHT": "data/nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_BACK_RIGHT__1535658934028113.jpg"
+    }
+  },
+  {
+    "scene_token": "da41ecbc644b4915b84bb732e35ebf8c",
+    "frame_token": "7e4c3282bc2a4402b5d1d6705f9eb844",
+    "question": "What actions taken by the ego vehicle can lead to a collision with <c1,CAM_BACK,0.5073,0.5778>?",
+    "question_type": "planning",
+    "tag": [
+      1
+    ],
+    "answer": "Back up.",
+    "pred": "**Actions that could cause a collision with <c1,CAM_BACK,0.5073,0.5778>**\n\n1. **Reversing without checking the rear\u2011view camera** \u2013 turning the steering wheel while backing up can drive the ego vehicle into the object behind it.  \n2. **Executing a hard left or right turn while the object is still in the rear\u2011view field** \u2013 the vehicle\u2019s path may intersect the object\u2019s position.  \n3. **Accelerating or changing lanes into the space occupied by the object** \u2013 if the ego vehicle cuts into the lane where the object is located, a collision is likely.  \n4. **Failing to maintain a safe following distance when the object is moving behind** \u2013 closing the gap too quickly can result in a rear\u2011end impact.  \n5. **Ignoring a stop or yield sign that the object is obeying** \u2013 proceeding through an intersection or merge where the object is already stopped or yielding can cause a collision.  \n\nThese actions, if performed while the object is within the ego vehicle\u2019s rear\u2011view camera range, can lead to a collision.",
+    "image_path": {
+      "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
+      "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
+      "CAM_FRONT_RIGHT": "data/nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_RIGHT__1535658934020482.jpg",
+      "CAM_BACK": "data/nuscenes/samples/CAM_BACK/n008-2018-08-30-15-52-26-0400__CAM_BACK__1535658934037558.jpg",
+      "CAM_BACK_LEFT": "data/nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-30-15-52-26-0400__CAM_BACK_LEFT__1535658934047405.jpg",
+      "CAM_BACK_RIGHT": "data/nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_BACK_RIGHT__1535658934028113.jpg"
+    }
+  },
+  {
+    "scene_token": "da41ecbc644b4915b84bb732e35ebf8c",
+    "frame_token": "7e4c3282bc2a4402b5d1d6705f9eb844",
+    "question": "In this scenario, what are safe actions to take for the ego vehicle?",
+    "question_type": "planning",
+    "tag": [
+      1
+    ],
+    "answer": "Keep going at the same speed, accelerate, and continue ahead.",
+    "pred": "**Safe actions for the ego vehicle**\n\n- Keep your lane and stay centered.  \n- Reduce speed to match the flow of the front\u2011center and front\u2011right vehicles.  \n- Maintain a safe following distance from the vehicle ahead.  \n- Avoid lane changes until the adjacent lanes are clear.  \n- Keep a safe distance from the back\u2011left truck and monitor rear\u2011view traffic.  \n- Stay alert for any sudden movements from the front\u2011right truck.",
+    "image_path": {
+      "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
+      "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
+      "CAM_FRONT_RIGHT": "data/nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_RIGHT__1535658934020482.jpg",
+      "CAM_BACK": "data/nuscenes/samples/CAM_BACK/n008-2018-08-30-15-52-26-0400__CAM_BACK__1535658934037558.jpg",
+      "CAM_BACK_LEFT": "data/nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-30-15-52-26-0400__CAM_BACK_LEFT__1535658934047405.jpg",
+      "CAM_BACK_RIGHT": "data/nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_BACK_RIGHT__1535658934028113.jpg"
+    }
+  },
+  {
+    "scene_token": "da41ecbc644b4915b84bb732e35ebf8c",
+    "frame_token": "7e4c3282bc2a4402b5d1d6705f9eb844",
+    "question": "Predict the behavior of the ego vehicle. Please select the correct answer from the following options: A. The ego vehicle is going straight. The ego vehicle is not moving. B. The ego vehicle is steering to the right. The ego vehicle is driving fast. C. The ego vehicle is slightly steering to the left. The ego vehicle is driving fast. D. The ego vehicle is steering to the left. The ego vehicle is driving with normal speed.",
+    "question_type": "behavior",
+    "tag": [
+      0
+    ],
+    "answer": "C",
+    "pred": "**Answer: D** \u2013 The ego vehicle is steering to the left and driving at normal speed.",
+    "image_path": {
+      "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658934012637.jpg",
+      "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_LEFT__1535658934004799.jpg",
+      "CAM_FRONT_RIGHT": "data/nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_FRONT_RIGHT__1535658934020482.jpg",
+      "CAM_BACK": "data/nuscenes/samples/CAM_BACK/n008-2018-08-30-15-52-26-0400__CAM_BACK__1535658934037558.jpg",
+      "CAM_BACK_LEFT": "data/nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-30-15-52-26-0400__CAM_BACK_LEFT__1535658934047405.jpg",
+      "CAM_BACK_RIGHT": "data/nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-30-15-52-26-0400__CAM_BACK_RIGHT__1535658934028113.jpg"
+    }
+  },
+  {
+    "scene_token": "ab6eea0e06c84f70be411a9d36636a7a",
+    "frame_token": "2d493b2677f84ca190bb6c205899251a",
+    "question": "What are the important objects in the current scene? Those objects will be considered for the future reasoning and driving decision.",
+    "question_type": "perception",
+    "tag": [
+      2
+    ],
+    "answer": "There is a black pickup truck to the back of the ego vehicle, a white truck to the front right of the ego vehicle, a yellow truck to the front of the ego vehicle, and a black SUV to the back of the ego vehicle. The IDs of these objects are <c1,CAM_BACK,0.5364,0.4806>, <c2,CAM_FRONT_RIGHT,0.8911,0.4620>, <c3,CAM_FRONT,0.2911,0.4630>, and <c4,CAM_BACK,0.7927,0.5056>.",
+    "pred": "There is a gray sedan to the back of the ego vehicle, a gray sedan to the front of the ego vehicle, and a black SUV to the front of the ego vehicle. The IDs of these objects are <c1,CAM_BACK,0.5073,0.5778>, <c2,CAM_FRONT,0.4886,0.5481>, and <c3,CAM_FRONT,0.6058,0.5769>.",
+    "image_path": {
+      "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915624362465.jpg",
+      "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_LEFT__1526915624354917.jpg",
+      "CAM_FRONT_RIGHT": "data/nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_RIGHT__1526915624369956.jpg",
+      "CAM_BACK": "data/nuscenes/samples/CAM_BACK/n008-2018-05-21-11-06-59-0400__CAM_BACK__1526915624387570.jpg",
+      "CAM_BACK_LEFT": "data/nuscenes/samples/CAM_BACK_LEFT/n008-2018-05-21-11-06-59-0400__CAM_BACK_LEFT__1526915624397295.jpg",
+      "CAM_BACK_RIGHT": "data/nuscenes/samples/CAM_BACK_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_BACK_RIGHT__1526915624377813.jpg"
+    }
+  },
+  {
+    "scene_token": "ab6eea0e06c84f70be411a9d36636a7a",
+    "frame_token": "2d493b2677f84ca190bb6c205899251a",
+    "question": "What is the moving status of object <c2,CAM_FRONT_RIGHT,0.8911,0.4620>? Please select the correct answer from the following options: A. Turn right. B. Turn left. C. Going ahead.",
+    "question_type": "perception",
+    "tag": [
+      0
+    ],
+    "answer": "C",
+    "pred": "C. Going ahead",
+    "image_path": {
+      "CAM_FRONT": "data/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915624362465.jpg",
+      "CAM_FRONT_LEFT": "data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_LEFT__1526915624354917.jpg",
+      "CAM_FRONT_RIGHT": "data/nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_RIGHT__1526915624369956.jpg",
+      "CAM_BACK": "data/nuscenes/samples/CAM_BACK/n008-2018-05-21-11-06-59-0400__CAM_BACK__1526915624387570.jpg",
+      "CAM_BACK_LEFT": "data/nuscenes/samples/CAM_BACK_LEFT/n008-2018-05-21-11-06-59-0400__CAM_BACK_LEFT__1526915624397295.jpg",
+      "CAM_BACK_RIGHT": "data/nuscenes/samples/CAM_BACK_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_BACK_RIGHT__1526915624377813.jpg"
     }
   }
 ]

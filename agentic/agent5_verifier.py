@@ -16,20 +16,38 @@ class VerifierAgent:
         
         Args:
             question: Original question
-            execution_result: Results from ExecutorAgent
+            execution_result: Results from ExecutorAgent (contains answer, reasoning, trace)
             scene_graph: Scene graph
             
         Returns:
             Refined answer with confidence
         """
-        draft_answer = execution_result.get("answer", "")
+        # Ensure execution_result is a dict
+        if isinstance(execution_result, str):
+            draft_answer = execution_result
+            trace = []
+        elif isinstance(execution_result, dict):
+            draft_answer = execution_result.get("answer", "")
+            trace = execution_result.get("trace", [])
+        else:
+            draft_answer = str(execution_result)
+            trace = []
         scene_desc = scene_graph.get("scene_description", "")
+        
+        # Build reasoning chain from trace if available
+        if trace:
+            reasoning_chain = self._build_reasoning_chain(trace)
+        else:
+            reasoning_chain = draft_answer
         
         prompt = f"""Refine this answer for a driving question. Make it concise and accurate.
 
 Question: {question}
 
 Draft Answer: {draft_answer}
+
+Reasoning Chain:
+{reasoning_chain}
 
 Provide a refined, clear, and concise answer. Don't critique, just give the final answer.
 
@@ -48,7 +66,7 @@ Refined Answer:"""
             "is_valid": True,
             "confidence": 80,
             "final_answer": final_answer,
-            "reasoning_chain": draft_answer
+            "reasoning_chain": reasoning_chain
         }
     
     def _build_reasoning_chain(self, trace: list) -> str:

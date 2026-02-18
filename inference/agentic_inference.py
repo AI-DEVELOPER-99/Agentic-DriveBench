@@ -8,7 +8,7 @@ from tqdm import tqdm
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ..agentic.pipeline import AgenticPipeline
+from agentic.pipeline import AgenticPipeline
 
 
 def main():

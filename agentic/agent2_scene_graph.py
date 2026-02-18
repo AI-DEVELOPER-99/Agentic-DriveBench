@@ -15,12 +15,42 @@ class SceneGraphAgent:
             perception_result: Output from PerceptionAgent
             
         Returns:
-            Scene graph with summary
+            Scene graph with nodes and edges
         """
         description = perception_result.get("description", "")
+        detections = perception_result.get("detections", [])
+        
+        # Build nodes from detections
+        nodes = []
+        for idx, det in enumerate(detections):
+            node = {
+                "id": f"obj_{idx}",
+                "type": det.get("class", "unknown"),
+                "attributes": {
+                    "position": det.get("position", ""),
+                    "distance": det.get("distance", ""),
+                    "confidence": det.get("confidence", 0),
+                    "camera_view": det.get("camera_view", "")
+                }
+            }
+            nodes.append(node)
+        
+        # Build edges (spatial relations)
+        edges = []
+        for i, obj1 in enumerate(nodes):
+            for j, obj2 in enumerate(nodes):
+                if i < j:
+                    relation = self._infer_relation(obj1, obj2)
+                    edges.append({
+                        "source": obj1["id"],
+                        "target": obj2["id"],
+                        "relation": relation
+                    })
         
         return {
             "scene_description": description,
+            "nodes": nodes,
+            "edges": edges,
             "raw_perception": perception_result
         }
     

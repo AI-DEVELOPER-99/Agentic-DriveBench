@@ -11,46 +11,50 @@ def test_pipeline():
     with open('data/drivebench-test.json', 'r') as f:
         test_data = json.load(f)
     
-    sample = test_data[10]
-    
-    print("="*80)
-    print("Testing Agentic Pipeline")
-    print("="*80)
-    print(f"\nQuestion: {sample['question']}")
-    print(f"Ground Truth: {sample['answer']}")
-    
-    # Test baseline
-    print("\n" + "-"*80)
-    print("Baseline VLM:")
-    print("-"*80)
-    try:
-        baseline = BaselineVLM()
-        baseline_answer = baseline.answer_question(
-            question=sample['question'],
-            image_paths=sample['image_path']
-        )
-        print(f"Answer: {baseline_answer}")
-    except Exception as e:
-        print(f"Error: {e}")
-    
-    # Test agentic pipeline
-    print("\n" + "-"*80)
-    print("Agentic Pipeline:")
-    print("-"*80)
-    try:
-        pipeline = AgenticPipeline()
-        result = pipeline.process(
-            question=sample['question'],
-            image_paths=sample['image_path']
-        )
-        print(f"Answer: {result['answer']}")
-        print(f"Confidence: {result['confidence']}")
-        print(f"\nReasoning Chain:")
-        print(result['reasoning_chain'])
-    except Exception as e:
-        print(f"Error: {e}")
-    
-    print("\n" + "="*80)
+    # Test multiple samples
+    for idx in [10]:  # Test the first sample
+        sample = test_data[idx]
+        
+        print("="*80)
+        print(f"Testing Agentic Pipeline - Sample {idx}")
+        print("="*80)
+        print(f"\nQuestion: {sample['question']}")
+        print(f"Ground Truth: {sample['answer']}")
+        
+        # Test baseline
+        print("\n" + "-"*80)
+        print("Baseline VLM:")
+        print("-"*80)
+        try:
+            baseline = BaselineVLM()
+            baseline_answer = baseline.answer_question(
+                question=sample['question'],
+                image_paths=sample['image_path']
+            )
+            print(f"Answer: {baseline_answer}")
+        except Exception as e:
+            print(f"Error: {e}")
+        
+        # Test agentic pipeline
+        print("\n" + "-"*80)
+        print("Agentic Pipeline:")
+        print("-"*80)
+        try:
+            pipeline = AgenticPipeline()
+            result = pipeline.process(
+                question=sample['question'],
+                image_paths=sample['image_path']
+            )
+            print(f"Perception: {result['metadata']['perception']['description']}")
+            print(result)
+            print(f"Answer: {result['answer']}")
+            print(f"Confidence: {result['confidence']}")
+            print(f"\nReasoning Chain:")
+            print(result['reasoning_chain'])
+        except Exception as e:
+            print(f"Error: {e}")
+        
+        print("\n" + "="*80)
 
 
 if __name__ == '__main__':
