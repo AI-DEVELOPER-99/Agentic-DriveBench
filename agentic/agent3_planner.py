@@ -1,5 +1,5 @@
 """Agent 3: Planner Agent - Decomposes questions and creates reasoning plans."""
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from .ollama_client import OllamaClient
 import re
 
@@ -106,7 +106,7 @@ Answer:"""
         
         return steps
 
-    def _find_object_at(self, camera: str, x: float, y: float, scene_graph: Dict[str, Any]) -> Dict[str, Any] | None:
+    def _find_object_at(self, camera: str, x: float, y: float, scene_graph: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Find the detected object closest to the given coordinates in the camera."""
         detections = scene_graph.get("raw_perception", {}).get("detections", [])
         candidates = [d for d in detections if d.get("camera_view") == camera.lower()]
