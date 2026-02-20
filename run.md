@@ -21,11 +21,18 @@ source .env/bin/activate
 source env.sh  
 python compare.py --test-file data/drivebench-test.json
 
-## With GPT Evaluation
+## With GPT Evaluation (OpenAI)
 export OPENAI_API_KEY=your_key_here
 source .env/bin/activate
 source env.sh
 python compare.py --max-samples 100 --eval-gpt
+
+## With Local GPT Evaluation (ollama)
+# ensure the model is running (e.g. `ollama run gpt-oss:20b`)
+source .env/bin/activate
+source env.sh
+python compare.py --max-samples 100 --eval-gpt --use-local-gpt \
+    --ollama-model gpt-oss:20b --ollama-url http://localhost:11434
 
 ## 📊 Results
 1. Outputs saved to results directory

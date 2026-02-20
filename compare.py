@@ -9,8 +9,15 @@ from pathlib import Path
 
 
 def run_inference(inference_script, test_file, output_file, max_samples=None, extra_args=None):
-    """Run inference script."""
-    cmd = ['python', inference_script, '--test-file', test_file, '--output', output_file]
+    """Run inference script using the same Python interpreter.
+
+    Previously the command used the literal string ``'python'`` which could
+    resolve to the system Python rather than the activated virtualenv.  This
+    caused ``ModuleNotFoundError`` for packages that lived only in the env
+    (e.g. ultralytics).  Using ``sys.executable`` guarantees the child
+    process uses the exact interpreter executing the current script.
+    """
+    cmd = [sys.executable, inference_script, '--test-file', test_file, '--output', output_file]
     
     if max_samples:
         cmd.extend(['--max-samples', str(max_samples)])
@@ -23,7 +30,8 @@ def run_inference(inference_script, test_file, output_file, max_samples=None, ex
     return result.returncode == 0
 
 
-def run_evaluation(pred_file, eval_gpt=False, api_key=None):
+def run_evaluation(pred_file, eval_gpt=False, api_key=None,
+                   use_local=False, ollama_model=None, ollama_url=None):
     """Run evaluation on predictions."""
     # Import and run evaluation directly instead of subprocess
     import sys
@@ -52,7 +60,10 @@ def run_evaluation(pred_file, eval_gpt=False, api_key=None):
         desc_file=desc_file,
         eval_gpt=eval_gpt,
         temperature=0.0,
-        max_tokens=100000
+        max_tokens=100000,
+        use_local_gpt=use_local,
+        ollama_model=ollama_model,
+        ollama_url=ollama_url
     )
     
     # Process each data item
@@ -128,9 +139,15 @@ def main():
     parser.add_argument('--max-samples', type=int, default=100,
                         help='Maximum number of samples to test')
     parser.add_argument('--eval-gpt', action='store_true',
-                        help='Run GPT evaluation (requires OpenAI API key)')
+                        help='Run GPT evaluation (requires OpenAI API key or local model)')
     parser.add_argument('--api-key', type=str, default=None,
                         help='OpenAI API key for GPT evaluation')
+    parser.add_argument('--use-local-gpt', action='store_true',
+                        help='Use a local Ollama model instead of OpenAI')
+    parser.add_argument('--ollama-model', type=str, default='gpt-oss:20b',
+                        help='Local Ollama model name to use when --use-local-gpt is set')
+    parser.add_argument('--ollama-url', type=str, default='http://localhost:11434',
+                        help='Base URL for local Ollama server')
     parser.add_argument('--skip-inference', action='store_true',
                         help='Skip inference and use existing predictions')
     args = parser.parse_args()
@@ -169,12 +186,26 @@ def main():
     print("\n" + "="*80)
     print("STEP 3: Evaluating Baseline VLM")
     print("="*80)
-    baseline_scores = run_evaluation(baseline_pred_file, args.eval_gpt, args.api_key)
+    baseline_scores = run_evaluation(
+        baseline_pred_file,
+        args.eval_gpt,
+        args.api_key,
+        use_local=args.use_local_gpt,
+        ollama_model=args.ollama_model,
+        ollama_url=args.ollama_url
+    )
     
     print("\n" + "="*80)
     print("STEP 4: Evaluating Agentic Pipeline")
     print("="*80)
-    agentic_scores = run_evaluation(agentic_pred_file, args.eval_gpt, args.api_key)
+    agentic_scores = run_evaluation(
+        agentic_pred_file,
+        args.eval_gpt,
+        args.api_key,
+        use_local=args.use_local_gpt,
+        ollama_model=args.ollama_model,
+        ollama_url=args.ollama_url
+    )
     
     # Print comparison
     print_comparison(baseline_scores, agentic_scores)

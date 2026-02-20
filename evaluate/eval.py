@@ -16,20 +16,28 @@ from evaluate.prompts import (PERCEPTION_MCQ_PROMPT, PERCEPTION_VQA_PROMPT,
 
 class EvaluationSuit:
     def __init__(self, 
-                 api_key: str, 
-                 log_file: str, 
-                 desc_file: str,
+                 api_key: str = None, 
+                 log_file: str = None, 
+                 desc_file: str = None,
                  eval_gpt: bool = True,
                  temperature: float = 0.0,
-                 max_tokens: int = 3000):
+                 max_tokens: int = 3000,
+                 use_local_gpt: bool = False,
+                 ollama_model: str = "gpt-oss:20b",
+                 ollama_url: str = "http://localhost:11434"):
         """Initialize the Evaluation Suite.
         Args:
-            api_key (str): Your OpenAI API key.
+            api_key (str): Your OpenAI API key (ignored if use_local_gpt).
             log_file (str): Path to the file where all GPT responses will be logged.
             desc_file (str): Path to the file containing visual descriptions.
             eval_gpt (bool): Whether to evaluate GPT score.
             temperature (float): GPT temperature.
             max_tokens (int): GPT max tokens.
+            use_local_gpt (bool): If True, use a local Ollama model instead of
+                the OpenAI API.  The ``api_key`` parameter is ignored.
+            ollama_model (str): Name of the local Ollama model to query.
+            ollama_url (str): Base URL of the Ollama server (default
+                http://localhost:11434).
         """
         
         self.eval_gpt = eval_gpt
@@ -39,7 +47,15 @@ class EvaluationSuit:
         # Langauge evaluation api
         self.language_eval = language_evaluation.CocoEvaluator(coco_types=["BLEU", "ROUGE_L", "CIDEr"])
         # GPT evaluation api
-        self.gpt_score_eval = GPTEvaluation(api_key, log_file=log_file)
+        self.gpt_score_eval = GPTEvaluation(
+            api_key,
+            log_file=log_file,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            use_local=use_local_gpt,
+            ollama_model=ollama_model,
+            ollama_url=ollama_url
+        )
         
         # Task - Question_type - Metric: List[data]
         self.results = {
@@ -231,6 +247,9 @@ if __name__ == '__main__':
     parser.add_argument('--eval-gpt', action='store_true', help='Evaluate GPT score')
     parser.add_argument('--temperature', '-t', type=float, default=0.0, help='GPT temperature')
     parser.add_argument('--max-tokens', '-m', type=int, default=3000, help='GPT max tokens')
+    parser.add_argument('--use-local-gpt', action='store_true', help='Use local Ollama model for GPT evaluation')
+    parser.add_argument('--ollama-model', type=str, default='gpt-oss:20b', help='Local Ollama model name to use when --use-local-gpt is set')
+    parser.add_argument('--ollama-url', type=str, default='http://localhost:11434', help='Base URL for local Ollama server')
     args = parser.parse_args()
 
     # Log path for GPT evaluation
@@ -241,17 +260,23 @@ if __name__ == '__main__':
     # if key is not provided, read from environment variable
     if not args.key:
         args.key = os.getenv('OPENAI_API_KEY')
+    # if user wants to use the local model, API key is irrelevant
 
     with open(args.path, 'r') as f:
         data = json.load(f)
 
     desc_file = 'data/visual_description.json'
-    evaluation = EvaluationSuit(args.key, 
-                                log_path, 
-                                desc_file, 
-                                eval_gpt=args.eval_gpt,
-                                temperature=args.temperature,
-                                max_tokens=args.max_tokens)
+    evaluation = EvaluationSuit(
+        api_key=args.key,
+        log_file=log_path,
+        desc_file=desc_file,
+        eval_gpt=args.eval_gpt,
+        temperature=args.temperature,
+        max_tokens=args.max_tokens,
+        use_local_gpt=args.use_local_gpt,
+        ollama_model=args.ollama_model,
+        ollama_url=args.ollama_url
+    )
 
     for data_item in tqdm(data):
         evaluation.forward(data_item)
